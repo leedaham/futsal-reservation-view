@@ -1,0 +1,21 @@
+api:
+  host: www.example.com
+  uri:
+    login: /login
+    step1: /step1
+    step2: /step2
+    step3: /step3
+    #get-reservation-status: /getInfo
+login:
+  userId: example
+  userPasswd: examplePwd
+
+game:
+  date: 19991231
+  isTwoHoursRental: true
+  time1: 10
+  time2: 11
+  stadium1: 1
+  stadium2: 2
+  stadium3: 3
+  stadium4: 4

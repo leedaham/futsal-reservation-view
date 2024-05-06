@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: futsal-reservation-view
+  config:
+    import: info.yaml
+
+server:
+  port: 9080
