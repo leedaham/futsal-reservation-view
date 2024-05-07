@@ -81,6 +81,7 @@ public class Login {
         }
 
         log.info("================  Login End  ================");
+        log.info("");
         return loginCookie;
     }
 
