@@ -59,10 +59,10 @@ public class Common {
     public static HttpHeaders makeHeader(MediaType mediaType) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(mediaType);  // Content-Type 헤더 설정
-        headers.setAccept(Collections.singletonList(MediaType.ALL));  // Accept 헤더 설정
+//        headers.setAccept(Collections.singletonList(MediaType.ALL));  // Accept 헤더 설정
         headers.set("Accept-Encoding", "gzip, deflate, br");  // Accept-Encoding 헤더 설정
         headers.set("Connection", "keep-alive");  // Connection 헤더 설정
-//        headers.set(HttpHeaders.ACCEPT, "*/*");
+        headers.set(HttpHeaders.ACCEPT, "*/*");
 //        headers.set("User-Agent", "PostmanRuntime/7.36.1");
 
         return headers;
@@ -79,6 +79,9 @@ public class Common {
     }
 
     public static ReservationResponse requestReservation (String url, MultiValueMap<String, String> body, HttpHeaders headers) {
+        log.info("request header: {}", headers);
+        log.info("request body: {}", body);
+
         // 요청 엔티티 구성
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 

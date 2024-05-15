@@ -11,7 +11,12 @@ login:
   userPasswd: examplePwd
 
 game:
-  date: 19991231
+  date:
+    auto:
+      enabled: true
+      day-of-week: 2 #요일: 1~7 (1은 월요일, 7은 일요일을 의미함)
+    manual:
+      set-value: 20240610
   isTwoHoursRental: true
   time1: 10
   time2: 11
@@ -19,3 +24,11 @@ game:
   stadium2: 2
   stadium3: 3
   stadium4: 4
+
+privacy-info:
+  name:
+  phone:
+  email:
+  address1:
+  address2:
+  zip:

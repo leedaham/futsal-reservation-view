@@ -64,7 +64,7 @@ public class StepOne {
             eachStepResult.setResult(reservationResponse.getResult());
             eachStepResult.setMsg(reservationResponse.getMsg());
             eachStepResult.setStadiumNo(stadium);
-            eachStepResult.setReservationNo(reservationResponse.getReservationNo());
+            eachStepResult.setReservationNo(reservationResponse.getErntApplcntNo());
         }
 
         log.info("=============== Step  One  END ===============");

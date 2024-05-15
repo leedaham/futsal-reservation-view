@@ -6,7 +6,7 @@ import lombok.Data;
 public class ReservationResponse {
     private String result;
     private String msg;
-    private String reservationNo;
+    private String erntApplcntNo;
 
     public boolean isEmpty() {
         return result == null;
