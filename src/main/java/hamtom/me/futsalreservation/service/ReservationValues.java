@@ -47,6 +47,19 @@ public class ReservationValues {
     @Value("${game.stadium4}")
     private String gameStadium4;
 
+    @Value("${privacy-info.name}") @Getter
+    private String name;
+    @Value("${privacy-info.phone}") @Getter
+    private String phone;
+    @Value("${privacy-info.email}") @Getter
+    private String email;
+    @Value("${privacy-info.address1}") @Getter
+    private String address1;
+    @Value("${privacy-info.address2}") @Getter
+    private String address2;
+    @Value("${privacy-info.zip}") @Getter
+    private String zip;
+
     @Getter
     private List<String> gameDateTime;
     @Getter

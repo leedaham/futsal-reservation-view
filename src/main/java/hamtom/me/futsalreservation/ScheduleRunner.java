@@ -30,6 +30,7 @@ public class ScheduleRunner {
     @Value("${login.userPasswd}")
     private String userPasswd;
 
+
     private final ReservationValues reservationValues;
     private final Login login;
     private final StepOne stepOne;
@@ -39,9 +40,13 @@ public class ScheduleRunner {
     @PostConstruct
     public void init() {
         login.setValues(apiHost, apiLoginUri, userId, userPasswd);
+
         stepOne.setUri(apiHost, apiStepOneUri);
         stepOne.setReservationValues(reservationValues);
+
         stepTwo.setUri(apiHost, apiStepTwoUri);
+        stepTwo.setPrivacyValues(reservationValues);
+
         stepThree.setUri(apiHost, apiStepThreeUri);
     }
 
@@ -52,17 +57,17 @@ public class ScheduleRunner {
     public void cron() {
         LoginCookie loginCookie = login.executeLogin();
         log.info("* [RESULT]     Login: {}", loginCookie.toString());
-        if(!loginCookie.isLoginStatus()) return;
+        if(loginCookie.isFailure()) return;
 
         String cookie = loginCookie.makeCookieForHeader();
 
         EachStepResult eachStepResult = stepOne.executeStep(cookie);
         log.info("* [RESULT]   StepOne: {}", eachStepResult.toString());
-        if(!eachStepResult.isResultExist()) return;
+        if(eachStepResult.isFailure()) return;
 
         eachStepResult = stepTwo.executeStep(eachStepResult);
         log.info("* [RESULT]   StepTwo: {}", eachStepResult.toString());
-        if(!eachStepResult.isResultExist()) return;
+        if(eachStepResult.isFailure()) return;
 
         eachStepResult = stepThree.executeStep(eachStepResult);
         log.info("* [RESULT] StepThree: {}", eachStepResult.toString());

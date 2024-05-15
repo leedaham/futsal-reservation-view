@@ -32,11 +32,9 @@ public class StepThree {
         //request > response
         ReservationResponse reservationResponse = requestReservation(url, body, headers);
 
-        String result = reservationResponse.getResult();
-        String msg = reservationResponse.getMsg();
-        if (result.equalsIgnoreCase("S")) {
-            eachStepResult.setResult(result);
-            eachStepResult.setMsg(msg);
+        if (reservationResponse.isSuccess()) {
+            eachStepResult.setResult(reservationResponse.getResult());
+            eachStepResult.setMsg(reservationResponse.getMsg());
         }
 
         log.info("=============== Step Three END ===============");

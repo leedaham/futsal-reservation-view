@@ -46,50 +46,25 @@ public class StepOne {
 
         //Header, Body
         HttpHeaders headers = makeHeader(MediaType.MULTIPART_FORM_DATA, cookie);
-        List<MultiValueMap<String, String>> formList = makeForm();
-
-        for (MultiValueMap<String, String> form : formList) {
-            // 요청 엔티티 구성
-            HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(form, headers);
-
-            // 요청 보내기
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8)); // 추가한 부분
-            ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
-
-            // 응답 확인
-            HttpStatusCode responseCode = response.getStatusCode();
-            log.info("responseCode: {}", responseCode);
-
-            String responseBody = response.getBody();
-            if (Objects.isNull(responseBody)) {
-                throw new RuntimeException("No Response!");
-            }
-            log.info("responseBody: {}", responseBody);
-
-        }
-
-        for (String stadium : stadiumList) {
+        List<MultiValueMap<String, String>> bodyList = makeForm();
 
 
+        ReservationResponse reservationResponse = new ReservationResponse();
+        String stadium = "";
+        for (MultiValueMap<String, String> body : bodyList) {
+            stadium = body.getFirst(STADIUM_NO);
+            reservationResponse = requestReservation(url, body, headers);
 
-
-
-            JsonElement json = JsonParser.parseString(responseBody);
-            Gson gson = new Gson();
-            ReservationResponse reservationResponse = gson.fromJson(json, ReservationResponse.class);
-
-
-            String result = reservationResponse.getResult();
-            String msg = reservationResponse.getMsg();
-            if (result.equalsIgnoreCase("S")) {
-                String erntApplcntNo = reservationResponse.getErntApplcntNo();
-                eachStepResult.setResult(result);
-                eachStepResult.setMsg(msg);
-                eachStepResult.setStadiumNo(stadium);
-                eachStepResult.setReservationNo(erntApplcntNo);
+            if (reservationResponse.isSuccess()) {
                 break;
             }
+        }
+
+        if(reservationResponse.isSuccess()){
+            eachStepResult.setResult(reservationResponse.getResult());
+            eachStepResult.setMsg(reservationResponse.getMsg());
+            eachStepResult.setStadiumNo(stadium);
+            eachStepResult.setReservationNo(reservationResponse.getReservationNo());
         }
 
         log.info("=============== Step  One  END ===============");
@@ -113,7 +88,7 @@ public class StepOne {
         for (String stadium : stadiumList) {
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.addAll(bodyBase);
-            body.add("erntResveNo", stadium);
+            body.add(STADIUM_NO, stadium);
             formList.add(body);
         }
 

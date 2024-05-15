@@ -14,4 +14,12 @@ public class LoginCookie {
     public String makeCookieForHeader() {
         return String.format("%s=%s; %s=%s", JSESSIONID_KEY, JSESSIONID, WMONID_KEY, WMONID);
     }
+
+    public boolean isSuccess () {
+        return loginStatus;
+    }
+
+    public boolean isFailure() {
+        return !isSuccess();
+    }
 }

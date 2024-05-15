@@ -6,9 +6,12 @@ import lombok.Data;
 public class ReservationResponse {
     private String result;
     private String msg;
-    private String erntApplcntNo;
+    private String reservationNo;
 
     public boolean isEmpty() {
         return result == null;
+    }
+    public boolean isSuccess() {
+        return result.equalsIgnoreCase("S");
     }
 }

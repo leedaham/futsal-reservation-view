@@ -1,21 +1,13 @@
 package hamtom.me.futsalreservation.service;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import hamtom.me.futsalreservation.vo.vo.EachStepResult;
 import hamtom.me.futsalreservation.vo.vo.ReservationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
-import java.nio.charset.StandardCharsets;
-import java.util.*;
 
 import static hamtom.me.futsalreservation.service.Common.*;
 import static hamtom.me.futsalreservation.service.Common.makeUrl;
@@ -36,50 +28,27 @@ public class StepTwo {
         this.url = makeUrl(apiHost, apiStepTwoUri);
     }
 
+    public void setPrivacyValues(ReservationValues reservationValues) {
+        this.name = reservationValues.getName();
+        this.phone = reservationValues.getPhone();
+        this.email = reservationValues.getEmail();
+        this.address1 = reservationValues.getAddress1();
+        this.address2 = reservationValues.getAddress2();
+        this.zip = reservationValues.getZip();
+    }
+
     public EachStepResult executeStep(EachStepResult eachStepResult) {
         log.info("============== Step  Two  Start ==============");
 
-        String cookieForHeader = eachStepResult.getCookie();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA); // Content-Type을 form-data로 설정
-        headers.add(HttpHeaders.COOKIE, cookieForHeader);
-        headers.set(HttpHeaders.ACCEPT, "*/*");
-        headers.set("User-Agent", "PostmanRuntime/7.36.1");
-        headers.set("Accept-Encoding", "gzip, deflate, br");
-        headers.set("Connection", "keep-alive");
-
-        //body
+        //headers, body
+        HttpHeaders headers = makeHeader(MediaType.MULTIPART_FORM_DATA, eachStepResult.getCookie());
         MultiValueMap<String, String> body = makeForm(eachStepResult);
 
-        // 요청 엔티티 구성
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+        ReservationResponse reservationResponse = requestReservation(url, body, headers);
 
-        // 요청 보내기
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8)); // 추가한 부분
-        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
-
-        // 응답 확인
-        HttpStatusCode responseCode = response.getStatusCode();
-        log.info("responseCode: {}", responseCode);
-
-        String responseBody = response.getBody();
-        if (Objects.isNull(responseBody)) {
-            throw new RuntimeException("No Response!");
-        }
-        log.info("responseBody: {}", responseBody);
-
-        JsonElement json = JsonParser.parseString(responseBody);
-        Gson gson = new Gson();
-        ReservationResponse reservationResponse = gson.fromJson(json, ReservationResponse.class);
-
-
-        String result = reservationResponse.getResult();
-        String msg = reservationResponse.getMsg();
-        if (result.equalsIgnoreCase("S")) {
-            eachStepResult.setResult(result);
-            eachStepResult.setMsg(msg);
+        if (reservationResponse.isSuccess()) {
+            eachStepResult.setResult(reservationResponse.getResult());
+            eachStepResult.setMsg(reservationResponse.getMsg());
         }
 
         log.info("=============== Step  Two  END ===============");

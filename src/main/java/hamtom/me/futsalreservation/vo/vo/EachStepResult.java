@@ -17,4 +17,16 @@ public class EachStepResult {
 
         return result.equalsIgnoreCase("S") || result.equalsIgnoreCase("F");
     }
+
+    public boolean isSuccess() {
+        if (result == null) {
+            return false;
+        }
+
+        return result.equalsIgnoreCase("S");
+    }
+
+    public boolean isFailure() {
+        return !isSuccess();
+    }
 }
