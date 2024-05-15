@@ -1,6 +1,6 @@
-package hamtom.me.futsalreservationview.call;
+package hamtom.me.futsalreservation.service;
 
-import hamtom.me.futsalreservationview.call.vo.LoginCookie;
+import hamtom.me.futsalreservation.vo.vo.LoginCookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,46 +12,52 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
-import static hamtom.me.futsalreservationview.call.Common.*;
-import static hamtom.me.futsalreservationview.call.vo.LoginCookie.JSESSIONID_KEY;
-import static hamtom.me.futsalreservationview.call.vo.LoginCookie.WMONID_KEY;
+import static hamtom.me.futsalreservation.service.Common.*;
+import static hamtom.me.futsalreservation.vo.vo.LoginCookie.JSESSIONID_KEY;
+import static hamtom.me.futsalreservation.vo.vo.LoginCookie.WMONID_KEY;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class Login {
-    private String apiHost;
-    private String apiLoginUri;
+    private String url;
     private String userId;
     private String userPasswd;
 
-    public Login(String apiHost, String apiLoginUri, String userId, String userPasswd) {
-        this.apiHost = apiHost;
-        this.apiLoginUri = apiLoginUri;
+    public void setValues(String apiHost, String apiLoginUri, String userId, String userPasswd) {
         this.userId = userId;
         this.userPasswd = userPasswd;
+        this.url = makeUrl(apiHost, apiLoginUri);
     }
 
-    public LoginCookie login(){
+    public LoginCookie executeLogin(){
         log.info("================ Login Start ================");
 
-        String url = makeUrl(apiHost, apiLoginUri);
+        //Header, Body
+        HttpHeaders headers = makeHeader(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> body = makeBody();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);  // Content-Type 헤더 설정
-        headers.setAccept(Collections.singletonList(MediaType.ALL));  // Accept 헤더 설정
-        headers.set("Accept-Encoding", "gzip, deflate, br");  // Accept-Encoding 헤더 설정
-        headers.set("Connection", "keep-alive");  // Connection 헤더 설정
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("userId", userId);
-        params.add("userPasswd", userPasswd);
-        log.info("login ID: {}", userId);
-
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+        //Request > Response
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
         ResponseEntity<String> response = new RestTemplate().postForEntity(url, requestEntity, String.class);
 
         // 응답 확인
+        LoginCookie loginCookie = checkResponse(response);
+
+        log.info("================  Login End  ================");
+        log.info("");
+        return loginCookie;
+    }
+
+    private MultiValueMap<String, String> makeBody() {
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("userId", userId);
+        body.add("userPasswd", userPasswd);
+        log.info("login ID: {}", userId);
+        return body;
+    }
+
+    private LoginCookie checkResponse(ResponseEntity<String> response){
         HttpStatusCode responseCode = response.getStatusCode();
         String responseBody = Optional.ofNullable(response.getBody()).orElse("");
 
@@ -79,13 +85,8 @@ public class Login {
             loginCookie.setWMONID(wmonid);
             loginCookie.setJSESSIONID(jsessionid);
         }
-
-        log.info("================  Login End  ================");
-        log.info("");
         return loginCookie;
     }
-
-
 
     @SuppressWarnings("unused")
     private Map<String, String> makeParams(){

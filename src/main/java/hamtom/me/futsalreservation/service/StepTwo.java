@@ -1,0 +1,118 @@
+package hamtom.me.futsalreservation.service;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import hamtom.me.futsalreservation.vo.vo.EachStepResult;
+import hamtom.me.futsalreservation.vo.vo.ReservationResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.*;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static hamtom.me.futsalreservation.service.Common.*;
+import static hamtom.me.futsalreservation.service.Common.makeUrl;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class StepTwo {
+    private String url;
+    private String name;
+    private String phone;
+    private String email;
+    private String address1;
+    private String address2;
+    private String zip;
+
+    public void setUri(String apiHost, String apiStepTwoUri) {
+        this.url = makeUrl(apiHost, apiStepTwoUri);
+    }
+
+    public EachStepResult executeStep(EachStepResult eachStepResult) {
+        log.info("============== Step  Two  Start ==============");
+
+        String cookieForHeader = eachStepResult.getCookie();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA); // Content-Type을 form-data로 설정
+        headers.add(HttpHeaders.COOKIE, cookieForHeader);
+        headers.set(HttpHeaders.ACCEPT, "*/*");
+        headers.set("User-Agent", "PostmanRuntime/7.36.1");
+        headers.set("Accept-Encoding", "gzip, deflate, br");
+        headers.set("Connection", "keep-alive");
+
+        //body
+        MultiValueMap<String, String> body = makeForm(eachStepResult);
+
+        // 요청 엔티티 구성
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+
+        // 요청 보내기
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8)); // 추가한 부분
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+
+        // 응답 확인
+        HttpStatusCode responseCode = response.getStatusCode();
+        log.info("responseCode: {}", responseCode);
+
+        String responseBody = response.getBody();
+        if (Objects.isNull(responseBody)) {
+            throw new RuntimeException("No Response!");
+        }
+        log.info("responseBody: {}", responseBody);
+
+        JsonElement json = JsonParser.parseString(responseBody);
+        Gson gson = new Gson();
+        ReservationResponse reservationResponse = gson.fromJson(json, ReservationResponse.class);
+
+
+        String result = reservationResponse.getResult();
+        String msg = reservationResponse.getMsg();
+        if (result.equalsIgnoreCase("S")) {
+            eachStepResult.setResult(result);
+            eachStepResult.setMsg(msg);
+        }
+
+        log.info("=============== Step  Two  END ===============");
+        log.info("");
+        return eachStepResult;
+    }
+
+    private MultiValueMap<String, String> makeForm(EachStepResult eachStepResult) {
+        String stadiumNo = eachStepResult.getStadiumNo();
+        String reservationNo = eachStepResult.getReservationNo();
+
+        String[] emails = email.split("@");
+        String id = emails[0];
+        String domain = emails[1];
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add(STADIUM_NO, stadiumNo);
+        body.add(RESERVATION_NO, reservationNo);
+        body.add("checkAgress", "on");
+        body.add("expectNmpr", "12");
+        body.add("usePurps", "소규모 축구장 이용");
+        body.add("erntApplcntNm", name);
+        body.add("erntApplcntGrpNm", "");
+        body.add("erntApplcntTelno", "");
+        body.add("erntApplcntMbtlnum", phone);
+        body.add("email1", id);
+        body.add("email2", domain);
+        body.add("erntApplcntEmail", email);
+        body.add("erntApplcntZip", zip);
+        body.add("erntApplcntAdres", address1);
+        body.add("erntApplcntAdresDetail", address2);
+
+        return body;
+    }
+
+}

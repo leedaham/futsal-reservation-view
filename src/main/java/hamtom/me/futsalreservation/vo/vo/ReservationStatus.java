@@ -1,4 +1,4 @@
-package hamtom.me.futsalreservationview.call.vo;
+package hamtom.me.futsalreservation.vo.vo;
 
 import lombok.Getter;
 import lombok.Setter;
