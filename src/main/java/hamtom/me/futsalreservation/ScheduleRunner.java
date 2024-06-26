@@ -30,6 +30,8 @@ public class ScheduleRunner {
     @Value("${login.userPasswd}")
     private String userPasswd;
 
+    private final String cron = "58 59 23 ? * 6";;
+    private final long delay = 100000;
 
     private final ReservationValues reservationValues;
     private final Login login;
@@ -48,12 +50,15 @@ public class ScheduleRunner {
         stepTwo.setPrivacyValues(reservationValues);
 
         stepThree.setUri(apiHost, apiStepThreeUri);
+
+        log.info("cron: {}", cron);
+        log.info("예약시간: {}", reservationValues.getGameDateTime().toString());
     }
 
     //요일 (day of week): 0~6 (0은 일요일, 6은 토요일을 의미함)
     //토요일 실행시 화요일 예약, 금요일 실행시 월요일 예약
-    @Scheduled(fixedDelay = 100000)
-//    @Scheduled(cron = "56 59 23 ? * 6")
+//    @Scheduled(fixedDelay = delay)
+    @Scheduled(cron = cron)
     public void cron() {
         LoginCookie loginCookie = login.executeLogin();
         log.info("* [RESULT]     Login: {}", loginCookie.toString());

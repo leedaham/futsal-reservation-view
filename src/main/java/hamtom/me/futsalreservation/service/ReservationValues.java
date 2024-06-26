@@ -3,6 +3,7 @@ package hamtom.me.futsalreservation.service;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -145,8 +146,6 @@ public class ReservationValues {
         stadiumList.add(gameStadium2);
         stadiumList.add(gameStadium3);
         stadiumList.add(gameStadium4);
-
-        System.out.println(stadiumList);
 
         for (String stadium : stadiumList) {
             boolean isNumeric = stadium.chars().allMatch(Character::isDigit);

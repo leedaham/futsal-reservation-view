@@ -1,20 +1,13 @@
 package hamtom.me.futsalreservation.service;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import hamtom.me.futsalreservation.vo.vo.EachStepResult;
 import hamtom.me.futsalreservation.vo.vo.ReservationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static hamtom.me.futsalreservation.service.Common.*;
