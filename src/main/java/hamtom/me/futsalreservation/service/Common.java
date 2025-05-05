@@ -3,7 +3,7 @@ package hamtom.me.futsalreservation.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import hamtom.me.futsalreservation.vo.vo.ReservationResponse;
+import hamtom.me.futsalreservation.vo.ReservationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageConverter;

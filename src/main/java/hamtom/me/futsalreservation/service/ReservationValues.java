@@ -91,7 +91,7 @@ public class ReservationValues {
                 long daysToNextTuesday = plusDays.until(nextTuesday, ChronoUnit.DAYS);
 
                 // 가장 가까운 화요일 반환
-                LocalDateTime localDateTime = (daysToPreviousTuesday <= daysToNextTuesday) ? previousTuesday : nextTuesday;
+                LocalDateTime localDateTime = (daysToPreviousTuesday >= daysToNextTuesday) ? previousTuesday : nextTuesday;
                 plusDays = localDateTime;
             }
 

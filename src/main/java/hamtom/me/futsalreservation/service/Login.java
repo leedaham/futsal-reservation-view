@@ -1,6 +1,6 @@
 package hamtom.me.futsalreservation.service;
 
-import hamtom.me.futsalreservation.vo.vo.LoginCookie;
+import hamtom.me.futsalreservation.vo.LoginCookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,8 +13,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 import static hamtom.me.futsalreservation.service.Common.*;
-import static hamtom.me.futsalreservation.vo.vo.LoginCookie.JSESSIONID_KEY;
-import static hamtom.me.futsalreservation.vo.vo.LoginCookie.WMONID_KEY;
+import static hamtom.me.futsalreservation.vo.LoginCookie.JSESSIONID_KEY;
+import static hamtom.me.futsalreservation.vo.LoginCookie.WMONID_KEY;
 
 @Slf4j
 @Service

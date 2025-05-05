@@ -1,8 +1,8 @@
 package hamtom.me.futsalreservation;
 
 import hamtom.me.futsalreservation.service.*;
-import hamtom.me.futsalreservation.vo.vo.EachStepResult;
-import hamtom.me.futsalreservation.vo.vo.LoginCookie;
+import hamtom.me.futsalreservation.vo.EachStepResult;
+import hamtom.me.futsalreservation.vo.LoginCookie;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +29,11 @@ public class ScheduleRunner {
     private String userId;
     @Value("${login.userPasswd}")
     private String userPasswd;
+    @Value("${run-now}")
+    private boolean isRunNow;
 
-    private final String cron = "58 59 23 ? * 6";;
+//    private final String cron = "58 59 23 ? * 6";
+    private final String cron = "01 14 11 ? * 1";
     private final long delay = 100000;
 
     private final ReservationValues reservationValues;
@@ -53,6 +56,8 @@ public class ScheduleRunner {
 
         log.info("cron: {}", cron);
         log.info("예약시간: {}", reservationValues.getGameDateTime().toString());
+
+        runNow(isRunNow);
     }
 
     //요일 (day of week): 0~6 (0은 일요일, 6은 토요일을 의미함)
@@ -70,15 +75,22 @@ public class ScheduleRunner {
         log.info("* [RESULT]   StepOne: {}", eachStepResult.toString());
         if(eachStepResult.isFailure()) return;
 
-        eachStepResult = stepTwo.executeStep(eachStepResult);
-        log.info("* [RESULT]   StepTwo: {}", eachStepResult.toString());
-        if(eachStepResult.isFailure()) return;
-
-        eachStepResult = stepThree.executeStep(eachStepResult);
-        log.info("* [RESULT] StepThree: {}", eachStepResult.toString());
-
+//        eachStepResult = stepTwo.executeStep(eachStepResult);
+//        log.info("* [RESULT]   StepTwo: {}", eachStepResult.toString());
+//        if(eachStepResult.isFailure()) return;
+//
+//        eachStepResult = stepThree.executeStep(eachStepResult);
+//        log.info("* [RESULT] StepThree: {}", eachStepResult.toString());
+//
+//        log.info("* [RESULT]    Report: {}", eachStepResult.finishReport());
     }
 
+    public void runNow(boolean isRunNow){
+        log.info("isRunNow: {}", isRunNow);
+        if (isRunNow) {
+            cron();
+        }
+    }
 
 
 

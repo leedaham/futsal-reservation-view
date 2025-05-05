@@ -1,7 +1,7 @@
 package hamtom.me.futsalreservation.service;
 
-import hamtom.me.futsalreservation.vo.vo.EachStepResult;
-import hamtom.me.futsalreservation.vo.vo.ReservationResponse;
+import hamtom.me.futsalreservation.vo.EachStepResult;
+import hamtom.me.futsalreservation.vo.ReservationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;

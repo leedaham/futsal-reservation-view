@@ -1,5 +1,6 @@
-package hamtom.me.futsalreservation.vo.vo;
+package hamtom.me.futsalreservation.vo;
 
+import hamtom.me.futsalreservation.enums.Stadium;
 import lombok.Data;
 
 @Data
@@ -28,5 +29,10 @@ public class EachStepResult {
 
     public boolean isFailure() {
         return !isSuccess();
+    }
+
+    public String finishReport(){
+        String stadiumName = Stadium.getStadiumName(this.stadiumNo);
+        return (isSuccess() && stadiumName !=null) ? stadiumName + " 구장 예약 성공" : "구장 예약 실패";
     }
 }
